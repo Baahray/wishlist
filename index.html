@@ -13,7 +13,7 @@
 
 <div class="container">
 
-  <!-- HER SIDE -->
+  <!-- HER -->
   <div class="column">
     <h2>Her</h2>
 
@@ -23,10 +23,10 @@
 
     <div id="her-list"></div>
 
-    <div class="total">Total: £<span id="her-total">0</span></div>
+    <div class="total">Total: £<span id="her-total">0.00</span></div>
   </div>
 
-  <!-- HIS SIDE -->
+  <!-- HIM -->
   <div class="column">
     <h2>Him</h2>
 
@@ -36,21 +36,32 @@
 
     <div id="him-list"></div>
 
-    <div class="total">Total: £<span id="him-total">0</span></div>
+    <div class="total">Total: £<span id="him-total">0.00</span></div>
   </div>
 
 </div>
 
 <script>
-let data = JSON.parse(localStorage.getItem("wishlist")) || {
-  her: [],
-  him: []
-};
+let data = { her: [], him: [] };
 
+// Load safely
+function load() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("wishlist"));
+    if (saved && saved.her && saved.him) {
+      data = saved;
+    }
+  } catch (e) {
+    data = { her: [], him: [] };
+  }
+}
+
+// Save
 function save() {
   localStorage.setItem("wishlist", JSON.stringify(data));
 }
 
+// Render UI
 function render() {
   ["her", "him"].forEach(side => {
     const list = document.getElementById(side + "-list");
@@ -67,8 +78,10 @@ function render() {
 
       div.innerHTML = `
         <div>
-          ${item.link ? `<a href="${item.link}" target="_blank">${item.name}</a>` : item.name}
-          <span class="price">£${item.price}</span>
+          ${item.link 
+            ? `<a href="${item.link}" target="_blank">${item.name}</a>` 
+            : item.name}
+          <span class="price">£${Number(item.price).toFixed(2)}</span>
         </div>
         <span class="delete" onclick="removeItem('${side}', ${index})">✕</span>
       `;
@@ -80,14 +93,15 @@ function render() {
   });
 }
 
+// Add item
 function addItem(side) {
   const nameInput = document.getElementById(side + "-name");
   const priceInput = document.getElementById(side + "-price");
 
-  const name = nameInput.value;
-  const price = priceInput.value;
+  const name = nameInput.value.trim();
+  const price = parseFloat(priceInput.value);
 
-  if (!name || !price) return;
+  if (!name || isNaN(price)) return;
 
   const link = name.startsWith("http") ? name : "";
 
@@ -104,12 +118,15 @@ function addItem(side) {
   priceInput.value = "";
 }
 
+// Remove item
 function removeItem(side, index) {
   data[side].splice(index, 1);
   save();
   render();
 }
 
+// Init
+load();
 render();
 </script>
 
