@@ -3,25 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wishlist</title>
+<title>Our Wishlist</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-<div class="topbar">
-  <h1>Vetannie & Barry</h1>
-
-  <select id="currency" onchange="changeCurrency()">
-    <option value="GBP">£ GBP</option>
-    <option value="USD">$ USD</option>
-  </select>
-</div>
+<h1>Our Wishlist</h1>
 
 <div class="container">
 
+  <!-- Vetannie -->
   <div class="column">
     <h2>Vetannie</h2>
+
+    <select id="her-currency" onchange="render()">
+      <option value="GBP">£ GBP</option>
+      <option value="USD">$ USD</option>
+    </select>
 
     <input id="her-name" placeholder="Item name or link">
     <input id="her-price" type="number" placeholder="Price">
@@ -35,8 +34,14 @@
     </div>
   </div>
 
+  <!-- Barry -->
   <div class="column">
     <h2>Barry</h2>
+
+    <select id="him-currency" onchange="render()">
+      <option value="GBP">£ GBP</option>
+      <option value="USD">$ USD</option>
+    </select>
 
     <input id="him-name" placeholder="Item name or link">
     <input id="him-price" type="number" placeholder="Price">
@@ -54,13 +59,14 @@
 
 <script>
 let data = { her: [], him: [] };
-let currency = "GBP";
 const rate = 1.27; // GBP → USD approx
 
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem("wishlist"));
-    if (saved) data = saved;
+    if (saved && saved.her && saved.him) {
+      data = saved;
+    }
   } catch {}
 }
 
@@ -68,18 +74,22 @@ function save() {
   localStorage.setItem("wishlist", JSON.stringify(data));
 }
 
-function format(amount) {
-  return currency === "GBP" ? `£${amount.toFixed(2)}` : `$${amount.toFixed(2)}`;
+function format(amount, currency) {
+  return currency === "GBP"
+    ? `£${amount.toFixed(2)}`
+    : `$${amount.toFixed(2)}`;
 }
 
-function convert(amount) {
-  return currency === "GBP" 
+function convert(amount, currency) {
+  return currency === "GBP"
     ? `$${(amount * rate).toFixed(2)}`
     : `£${(amount / rate).toFixed(2)}`;
 }
 
 function render() {
   ["her", "him"].forEach(side => {
+
+    const currency = document.getElementById(side + "-currency").value;
     const list = document.getElementById(side + "-list");
     const totalEl = document.getElementById(side + "-total");
     const subEl = document.getElementById(side + "-sub");
@@ -96,7 +106,7 @@ function render() {
       div.innerHTML = `
         <div>
           ${item.link ? `<a href="${item.link}" target="_blank">${item.name}</a>` : item.name}
-          <span class="price">${format(item.price)}</span>
+          <span class="price">${format(item.price, currency)}</span>
         </div>
         <span class="delete" onclick="removeItem('${side}', ${index})">×</span>
       `;
@@ -104,8 +114,8 @@ function render() {
       list.appendChild(div);
     });
 
-    totalEl.textContent = format(total);
-    subEl.textContent = convert(total);
+    totalEl.textContent = format(total, currency);
+    subEl.textContent = convert(total, currency);
   });
 }
 
@@ -131,11 +141,6 @@ function addItem(side) {
 function removeItem(side, index) {
   data[side].splice(index, 1);
   save();
-  render();
-}
-
-function changeCurrency() {
-  currency = document.getElementById("currency").value;
   render();
 }
 
