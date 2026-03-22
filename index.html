@@ -4,131 +4,108 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wishlist</title>
-
-<style>
-body {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #f5f5f5;
-  margin: 0;
-  padding: 20px;
-}
-
-.container {
-  max-width: 600px;
-  margin: auto;
-}
-
-h1 {
-  text-align: center;
-}
-
-.card {
-  background: white;
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-  margin-bottom: 15px;
-}
-
-input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background: black;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.item a {
-  text-decoration: none;
-  color: black;
-}
-
-.delete {
-  color: red;
-  cursor: pointer;
-}
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
+<h1>Wishlist</h1>
+
 <div class="container">
 
-  <h1>Wishlist</h1>
+  <!-- HER SIDE -->
+  <div class="column">
+    <h2>Her</h2>
 
-  <div class="card">
-    <input id="name" placeholder="What do you want?">
-    <input id="link" placeholder="Optional link (Amazon, etc)">
-    <button onclick="addItem()">Add to Wishlist</button>
+    <input id="her-name" placeholder="Item name or link">
+    <input id="her-price" type="number" placeholder="Price (£)">
+    <button onclick="addItem('her')">Add</button>
+
+    <div id="her-list"></div>
+
+    <div class="total">Total: £<span id="her-total">0</span></div>
   </div>
 
-  <div class="card" id="list"></div>
+  <!-- HIS SIDE -->
+  <div class="column">
+    <h2>Him</h2>
+
+    <input id="him-name" placeholder="Item name or link">
+    <input id="him-price" type="number" placeholder="Price (£)">
+    <button onclick="addItem('him')">Add</button>
+
+    <div id="him-list"></div>
+
+    <div class="total">Total: £<span id="him-total">0</span></div>
+  </div>
 
 </div>
 
 <script>
-let items = JSON.parse(localStorage.getItem("wishlist")) || [];
+let data = JSON.parse(localStorage.getItem("wishlist")) || {
+  her: [],
+  him: []
+};
 
 function save() {
-  localStorage.setItem("wishlist", JSON.stringify(items));
+  localStorage.setItem("wishlist", JSON.stringify(data));
 }
 
 function render() {
-  const list = document.getElementById("list");
-  list.innerHTML = "";
+  ["her", "him"].forEach(side => {
+    const list = document.getElementById(side + "-list");
+    const totalEl = document.getElementById(side + "-total");
 
-  items.forEach((item, index) => {
-    const div = document.createElement("div");
-    div.className = "item";
+    list.innerHTML = "";
+    let total = 0;
 
-    div.innerHTML = `
-      <div>
-        ${item.link 
-          ? `<a href="${item.link}" target="_blank">${item.name}</a>` 
-          : item.name}
-      </div>
-      <span class="delete" onclick="removeItem(${index})">✕</span>
-    `;
+    data[side].forEach((item, index) => {
+      total += Number(item.price);
 
-    list.appendChild(div);
+      const div = document.createElement("div");
+      div.className = "item";
+
+      div.innerHTML = `
+        <div>
+          ${item.link ? `<a href="${item.link}" target="_blank">${item.name}</a>` : item.name}
+          <span class="price">£${item.price}</span>
+        </div>
+        <span class="delete" onclick="removeItem('${side}', ${index})">✕</span>
+      `;
+
+      list.appendChild(div);
+    });
+
+    totalEl.textContent = total.toFixed(2);
   });
 }
 
-function addItem() {
-  const name = document.getElementById("name").value;
-  const link = document.getElementById("link").value;
+function addItem(side) {
+  const nameInput = document.getElementById(side + "-name");
+  const priceInput = document.getElementById(side + "-price");
 
-  if (!name) return;
+  const name = nameInput.value;
+  const price = priceInput.value;
 
-  items.push({ name, link });
+  if (!name || !price) return;
+
+  const link = name.startsWith("http") ? name : "";
+
+  data[side].push({
+    name: name,
+    price: price,
+    link: link
+  });
+
   save();
   render();
 
-  document.getElementById("name").value = "";
-  document.getElementById("link").value = "";
+  nameInput.value = "";
+  priceInput.value = "";
 }
 
-function removeItem(index) {
-  items.splice(index, 1);
+function removeItem(side, index) {
+  data[side].splice(index, 1);
   save();
   render();
 }
