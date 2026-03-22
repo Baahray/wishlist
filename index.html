@@ -1,85 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Our Wishlist</title>
-
-<link rel="stylesheet" href="styles.css?v=6">
-</head>
-
-<body>
-
-<h1>Our Wishlist</h1>
-
-<div class="container">
-
-  <!-- Vetannie -->
-  <div class="column">
-
-    <h2>Vetannie</h2>
-
-    <select id="her-currency" onchange="render()">
-      <option value="GBP">£ GBP</option>
-      <option value="USD">$ USD</option>
-    </select>
-
-    <div class="form">
-      <input id="her-name" placeholder="Item or link">
-      <input id="her-price" type="number" placeholder="Price">
-
-      <select id="her-rating">
-        <option value="1">★</option>
-        <option value="2">★★</option>
-        <option value="3">★★★</option>
-      </select>
-
-      <button onclick="addItem('her')">Add item</button>
-    </div>
-
-    <div class="list" id="her-list"></div>
-
-    <div class="total">
-      <span id="her-total">£0.00</span>
-      <div class="sub" id="her-sub"></div>
-    </div>
-
-  </div>
-
-  <!-- Barry -->
-  <div class="column">
-
-    <h2>Barry</h2>
-
-    <select id="him-currency" onchange="render()">
-      <option value="GBP">£ GBP</option>
-      <option value="USD">$ USD</option>
-    </select>
-
-    <div class="form">
-      <input id="him-name" placeholder="Item or link">
-      <input id="him-price" type="number" placeholder="Price">
-
-      <select id="him-rating">
-        <option value="1">★</option>
-        <option value="2">★★</option>
-        <option value="3">★★★</option>
-      </select>
-
-      <button onclick="addItem('him')">Add item</button>
-    </div>
-
-    <div class="list" id="him-list"></div>
-
-    <div class="total">
-      <span id="him-total">£0.00</span>
-      <div class="sub" id="him-sub"></div>
-    </div>
-
-  </div>
-
-</div>
-
 <script>
 let data = { her: [], him: [] };
 const rate = 1.27;
@@ -111,6 +29,49 @@ function convert(amount, currency) {
   return currency === "GBP"
     ? `$${(amount * rate).toFixed(2)}`
     : `£${(amount / rate).toFixed(2)}`;
+}
+
+// ✨ SPARKLES
+function createSparkles(element) {
+  const rect = element.getBoundingClientRect();
+
+  for (let i = 0; i < 10; i++) {
+    const sparkle = document.createElement("div");
+    sparkle.className = "sparkle";
+
+    const x = (Math.random() - 0.5) * 80 + "px";
+    const y = (Math.random() - 0.5) * 80 + "px";
+
+    sparkle.style.setProperty("--x", x);
+    sparkle.style.setProperty("--y", y);
+
+    sparkle.style.left = rect.left + rect.width / 2 + "px";
+    sparkle.style.top = rect.top + rect.height / 2 + "px";
+
+    document.body.appendChild(sparkle);
+
+    setTimeout(() => sparkle.remove(), 600);
+  }
+}
+
+// 💨 SMOKE
+function createSmoke(element) {
+  const rect = element.getBoundingClientRect();
+
+  for (let i = 0; i < 8; i++) {
+    const smoke = document.createElement("div");
+    smoke.className = "smoke";
+
+    const x = (Math.random() - 0.5) * 40;
+    const y = (Math.random() - 0.5) * 40;
+
+    smoke.style.left = rect.left + rect.width / 2 + x + "px";
+    smoke.style.top = rect.top + rect.height / 2 + y + "px";
+
+    document.body.appendChild(smoke);
+
+    setTimeout(() => smoke.remove(), 500);
+  }
 }
 
 // Render
@@ -150,7 +111,7 @@ function render() {
   });
 }
 
-// Add item (FIXED animation)
+// Add item ✨
 function addItem(side) {
   const name = document.getElementById(side + "-name").value.trim();
   const price = parseFloat(document.getElementById(side + "-price").value);
@@ -168,39 +129,38 @@ function addItem(side) {
   save();
   render();
 
-  // ✨ Animate AFTER render
+  // ✨ Sparkle AFTER render
   setTimeout(() => {
     const items = document.querySelectorAll(`#${side}-list .item`);
     const lastItem = items[items.length - 1];
-    if (lastItem) {
-      lastItem.classList.add("add-anim");
-    }
-  }, 10);
+    if (lastItem) createSparkles(lastItem);
+  }, 50);
 
   document.getElementById(side + "-name").value = "";
   document.getElementById(side + "-price").value = "";
 }
 
-// Remove item (FIXED animation)
+// Remove item 💨
 function removeItem(side, index) {
   const items = document.querySelectorAll(`#${side}-list .item`);
   const itemEl = items[index];
 
   if (!itemEl) return;
 
-  itemEl.classList.add("remove-anim");
+  createSmoke(itemEl);
+
+  itemEl.style.transition = "0.2s";
+  itemEl.style.opacity = "0";
+  itemEl.style.transform = "scale(0.9)";
 
   setTimeout(() => {
     data[side].splice(index, 1);
     save();
     render();
-  }, 300);
+  }, 200);
 }
 
 // Init
 load();
 render();
 </script>
-
-</body>
-</html>
