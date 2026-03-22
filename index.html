@@ -3,69 +3,86 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Our Wishlist</title>
+<title>Wishlist</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-<h1>Our Wishlist</h1>
+<div class="topbar">
+  <h1>Vetannie & Barry</h1>
+
+  <select id="currency" onchange="changeCurrency()">
+    <option value="GBP">£ GBP</option>
+    <option value="USD">$ USD</option>
+  </select>
+</div>
 
 <div class="container">
 
-  <!-- HER -->
   <div class="column">
     <h2>Vetannie</h2>
 
     <input id="her-name" placeholder="Item name or link">
-    <input id="her-price" type="number" placeholder="Price (£)">
+    <input id="her-price" type="number" placeholder="Price">
     <button onclick="addItem('her')">Add</button>
 
     <div id="her-list"></div>
 
-    <div class="total">Total: £<span id="her-total">0.00</span></div>
+    <div class="total">
+      <span id="her-total">£0.00</span>
+      <div class="sub" id="her-sub"></div>
+    </div>
   </div>
 
-  <!-- HIM -->
   <div class="column">
     <h2>Barry</h2>
 
     <input id="him-name" placeholder="Item name or link">
-    <input id="him-price" type="number" placeholder="Price (£)">
+    <input id="him-price" type="number" placeholder="Price">
     <button onclick="addItem('him')">Add</button>
 
     <div id="him-list"></div>
 
-    <div class="total">Total: £<span id="him-total">0.00</span></div>
+    <div class="total">
+      <span id="him-total">£0.00</span>
+      <div class="sub" id="him-sub"></div>
+    </div>
   </div>
 
 </div>
 
 <script>
 let data = { her: [], him: [] };
+let currency = "GBP";
+const rate = 1.27; // GBP → USD approx
 
-// Load safely
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem("wishlist"));
-    if (saved && saved.her && saved.him) {
-      data = saved;
-    }
-  } catch (e) {
-    data = { her: [], him: [] };
-  }
+    if (saved) data = saved;
+  } catch {}
 }
 
-// Save
 function save() {
   localStorage.setItem("wishlist", JSON.stringify(data));
 }
 
-// Render UI
+function format(amount) {
+  return currency === "GBP" ? `£${amount.toFixed(2)}` : `$${amount.toFixed(2)}`;
+}
+
+function convert(amount) {
+  return currency === "GBP" 
+    ? `$${(amount * rate).toFixed(2)}`
+    : `£${(amount / rate).toFixed(2)}`;
+}
+
 function render() {
   ["her", "him"].forEach(side => {
     const list = document.getElementById(side + "-list");
     const totalEl = document.getElementById(side + "-total");
+    const subEl = document.getElementById(side + "-sub");
 
     list.innerHTML = "";
     let total = 0;
@@ -78,54 +95,50 @@ function render() {
 
       div.innerHTML = `
         <div>
-          ${item.link 
-            ? `<a href="${item.link}" target="_blank">${item.name}</a>` 
-            : item.name}
-          <span class="price">£${Number(item.price).toFixed(2)}</span>
+          ${item.link ? `<a href="${item.link}" target="_blank">${item.name}</a>` : item.name}
+          <span class="price">${format(item.price)}</span>
         </div>
-        <span class="delete" onclick="removeItem('${side}', ${index})">✕</span>
+        <span class="delete" onclick="removeItem('${side}', ${index})">×</span>
       `;
 
       list.appendChild(div);
     });
 
-    totalEl.textContent = total.toFixed(2);
+    totalEl.textContent = format(total);
+    subEl.textContent = convert(total);
   });
 }
 
-// Add item
 function addItem(side) {
-  const nameInput = document.getElementById(side + "-name");
-  const priceInput = document.getElementById(side + "-price");
-
-  const name = nameInput.value.trim();
-  const price = parseFloat(priceInput.value);
+  const name = document.getElementById(side + "-name").value.trim();
+  const price = parseFloat(document.getElementById(side + "-price").value);
 
   if (!name || isNaN(price)) return;
 
-  const link = name.startsWith("http") ? name : "";
-
   data[side].push({
-    name: name,
-    price: price,
-    link: link
+    name,
+    price,
+    link: name.startsWith("http") ? name : ""
   });
 
   save();
   render();
 
-  nameInput.value = "";
-  priceInput.value = "";
+  document.getElementById(side + "-name").value = "";
+  document.getElementById(side + "-price").value = "";
 }
 
-// Remove item
 function removeItem(side, index) {
   data[side].splice(index, 1);
   save();
   render();
 }
 
-// Init
+function changeCurrency() {
+  currency = document.getElementById("currency").value;
+  render();
+}
+
 load();
 render();
 </script>
