@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Our Wishlist</title>
-<link rel="stylesheet" href="styles.css">
+
+<!-- FORCE CSS REFRESH -->
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 
 <body>
@@ -15,6 +17,7 @@
 
   <!-- Vetannie -->
   <div class="column">
+
     <h2>Vetannie</h2>
 
     <select id="her-currency" onchange="render()">
@@ -22,20 +25,24 @@
       <option value="USD">$ USD</option>
     </select>
 
-    <input id="her-name" placeholder="Item name or link">
-    <input id="her-price" type="number" placeholder="Price">
-    <button onclick="addItem('her')">Add</button>
+    <div class="form">
+      <input id="her-name" placeholder="Item or link">
+      <input id="her-price" type="number" placeholder="Price">
+      <button onclick="addItem('her')">Add item</button>
+    </div>
 
-    <div id="her-list"></div>
+    <div class="list" id="her-list"></div>
 
     <div class="total">
       <span id="her-total">£0.00</span>
       <div class="sub" id="her-sub"></div>
     </div>
+
   </div>
 
   <!-- Barry -->
   <div class="column">
+
     <h2>Barry</h2>
 
     <select id="him-currency" onchange="render()">
@@ -43,24 +50,28 @@
       <option value="USD">$ USD</option>
     </select>
 
-    <input id="him-name" placeholder="Item name or link">
-    <input id="him-price" type="number" placeholder="Price">
-    <button onclick="addItem('him')">Add</button>
+    <div class="form">
+      <input id="him-name" placeholder="Item or link">
+      <input id="him-price" type="number" placeholder="Price">
+      <button onclick="addItem('him')">Add item</button>
+    </div>
 
-    <div id="him-list"></div>
+    <div class="list" id="him-list"></div>
 
     <div class="total">
       <span id="him-total">£0.00</span>
       <div class="sub" id="him-sub"></div>
     </div>
+
   </div>
 
 </div>
 
 <script>
 let data = { her: [], him: [] };
-const rate = 1.27; // GBP → USD approx
+const rate = 1.27;
 
+// Load safely
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem("wishlist"));
@@ -70,22 +81,26 @@ function load() {
   } catch {}
 }
 
+// Save
 function save() {
   localStorage.setItem("wishlist", JSON.stringify(data));
 }
 
+// Format currency
 function format(amount, currency) {
   return currency === "GBP"
     ? `£${amount.toFixed(2)}`
     : `$${amount.toFixed(2)}`;
 }
 
+// Convert currency
 function convert(amount, currency) {
   return currency === "GBP"
     ? `$${(amount * rate).toFixed(2)}`
     : `£${(amount / rate).toFixed(2)}`;
 }
 
+// Render UI
 function render() {
   ["her", "him"].forEach(side => {
 
@@ -119,6 +134,7 @@ function render() {
   });
 }
 
+// Add item
 function addItem(side) {
   const name = document.getElementById(side + "-name").value.trim();
   const price = parseFloat(document.getElementById(side + "-price").value);
@@ -138,12 +154,14 @@ function addItem(side) {
   document.getElementById(side + "-price").value = "";
 }
 
+// Remove item
 function removeItem(side, index) {
   data[side].splice(index, 1);
   save();
   render();
 }
 
+// Init
 load();
 render();
 </script>
