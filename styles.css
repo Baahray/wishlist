@@ -1,54 +1,71 @@
 /* Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;600&display=swap');
 
 /* Base */
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background: #f3efe8;
+  background: linear-gradient(180deg, #f7f3ee 0%, #efe9df 100%);
   color: #1a1a1a;
 }
 
 /* Title */
 h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 48px;
+  font-size: 42px;
   text-align: center;
-  margin: 60px 0 40px;
+  margin: 40px 20px 30px;
+  letter-spacing: -0.5px;
 }
 
 /* Layout */
 .container {
   display: flex;
   max-width: 1100px;
-  margin: 40px auto;
-  gap: 40px;
-  padding: 0 20px;
+  margin: auto;
+  gap: 30px;
+  padding: 0 20px 40px;
 }
 
-/* Card columns */
+/* Cards */
 .column {
   flex: 1;
   background: #ffffff;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  padding: 25px;
+  border-radius: 18px;
+
+  box-shadow: 
+    0 8px 25px rgba(0,0,0,0.08),
+    0 2px 6px rgba(0,0,0,0.04);
+
   display: flex;
   flex-direction: column;
+
+  transition: all 0.25s ease;
+}
+
+/* Hover lift (desktop only) */
+@media (hover: hover) {
+  .column:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+      0 18px 45px rgba(0,0,0,0.12),
+      0 6px 12px rgba(0,0,0,0.06);
+  }
 }
 
 /* Names */
 .column h2 {
   font-family: 'Playfair Display', serif;
-  font-size: 32px;
+  font-size: 28px;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 /* Currency dropdown */
 select {
   width: fit-content;
-  margin: 0 auto 20px;
+  margin: 0 auto 15px;
   padding: 6px 10px;
   font-size: 12px;
   border: 1px solid #ddd;
@@ -58,8 +75,8 @@ select {
 /* Inputs */
 input {
   width: 100%;
-  padding: 14px;
-  margin-bottom: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
   border: 1px solid #e5e2dc;
   background: transparent;
   font-size: 14px;
@@ -67,21 +84,21 @@ input {
 
 /* Button */
 button {
-  padding: 14px;
+  padding: 12px;
   border: none;
   background: #1a1a1a;
   color: white;
   font-size: 13px;
   letter-spacing: 1px;
   cursor: pointer;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 /* Items */
 .item {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
+  padding: 10px 0;
   border-bottom: 1px solid #eee;
   font-size: 14px;
 }
@@ -96,6 +113,7 @@ button {
 .price {
   margin-left: 10px;
   color: #888;
+  font-size: 13px;
 }
 
 /* Delete */
@@ -106,20 +124,52 @@ button {
 
 .delete:hover {
   opacity: 1;
+  color: #c0392b;
 }
 
 /* Total */
 .total {
   margin-top: auto;
-  padding-top: 20px;
+  padding-top: 15px;
   font-family: 'Playfair Display', serif;
-  font-size: 22px;
+  font-size: 20px;
   text-align: right;
 }
 
-/* Conversion text */
+/* Conversion */
 .sub {
-  font-size: 12px;
+  font-size: 11px;
   color: #888;
-  margin-top: 5px;
+  margin-top: 4px;
+}
+
+/* ------------------ */
+/* 📱 MOBILE FIX */
+/* ------------------ */
+
+@media (max-width: 768px) {
+
+  h1 {
+    font-size: 32px;
+    margin: 30px 10px;
+  }
+
+  .container {
+    flex-direction: column; /* STACK instead of side-by-side */
+    gap: 20px;
+    padding: 0 15px 30px;
+  }
+
+  .column {
+    padding: 20px;
+  }
+
+  .column h2 {
+    font-size: 24px;
+  }
+
+  button {
+    font-size: 12px;
+  }
+
 }
