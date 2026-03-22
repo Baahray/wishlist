@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Our Wishlist</title>
 
-<link rel="stylesheet" href="styles.css?v=7">
+<link rel="stylesheet" href="styles.css?v=14">
 </head>
 
 <body>
@@ -14,7 +14,6 @@
 
 <div class="container">
 
-  <!-- Vetannie -->
   <div class="column">
     <h2>Vetannie</h2>
 
@@ -44,7 +43,6 @@
     </div>
   </div>
 
-  <!-- Barry -->
   <div class="column">
     <h2>Barry</h2>
 
@@ -80,13 +78,10 @@
 let data = { her: [], him: [] };
 const rate = 1.27;
 
-/* ---------- LOAD / SAVE ---------- */
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem("wishlist"));
-    if (saved && saved.her && saved.him) {
-      data = saved;
-    }
+    if (saved && saved.her && saved.him) data = saved;
   } catch {}
 }
 
@@ -94,11 +89,8 @@ function save() {
   localStorage.setItem("wishlist", JSON.stringify(data));
 }
 
-/* ---------- FORMAT ---------- */
 function format(amount, currency) {
-  return currency === "GBP"
-    ? `£${amount.toFixed(2)}`
-    : `$${amount.toFixed(2)}`;
+  return currency === "GBP" ? `£${amount.toFixed(2)}` : `$${amount.toFixed(2)}`;
 }
 
 function convert(amount, currency) {
@@ -107,50 +99,43 @@ function convert(amount, currency) {
     : `£${(amount / rate).toFixed(2)}`;
 }
 
-/* ---------- EFFECTS ---------- */
-function createSparkles(element) {
-  const rect = element.getBoundingClientRect();
+function createSparkles(el) {
+  const r = el.getBoundingClientRect();
+  for (let i = 0; i < 20; i++) {
+    const s = document.createElement("div");
+    s.className = "sparkle";
 
-  for (let i = 0; i < 10; i++) {
-    const sparkle = document.createElement("div");
-    sparkle.className = "sparkle";
+    const a = Math.random() * Math.PI * 2;
+    const d = Math.random() * 80 + 20;
 
-    const x = (Math.random() - 0.5) * 80 + "px";
-    const y = (Math.random() - 0.5) * 80 + "px";
+    s.style.setProperty("--x", Math.cos(a) * d + "px");
+    s.style.setProperty("--y", Math.sin(a) * d + "px");
 
-    sparkle.style.setProperty("--x", x);
-    sparkle.style.setProperty("--y", y);
+    s.style.left = r.left + r.width / 2 + "px";
+    s.style.top = r.top + r.height / 2 + "px";
 
-    sparkle.style.left = rect.left + rect.width / 2 + "px";
-    sparkle.style.top = rect.top + rect.height / 2 + "px";
-
-    document.body.appendChild(sparkle);
-    setTimeout(() => sparkle.remove(), 600);
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1200);
   }
 }
 
-function createSmoke(element) {
-  const rect = element.getBoundingClientRect();
+function createSmoke(el) {
+  const r = el.getBoundingClientRect();
+  for (let i = 0; i < 16; i++) {
+    const s = document.createElement("div");
+    s.className = "smoke";
 
-  for (let i = 0; i < 8; i++) {
-    const smoke = document.createElement("div");
-    smoke.className = "smoke";
+    s.style.left = r.left + r.width / 2 + (Math.random() - 0.5) * 80 + "px";
+    s.style.top = r.top + r.height / 2 + (Math.random() - 0.5) * 80 + "px";
 
-    smoke.style.left = rect.left + rect.width / 2 + "px";
-    smoke.style.top = rect.top + rect.height / 2 + "px";
-
-    document.body.appendChild(smoke);
-    setTimeout(() => smoke.remove(), 500);
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 700);
   }
 }
 
-/* ---------- RENDER ---------- */
 function render() {
   ["her", "him"].forEach(side => {
-
-    const currencyEl = document.getElementById(side + "-currency");
-    const currency = currencyEl ? currencyEl.value : "GBP";
-
+    const currency = document.getElementById(side + "-currency")?.value || "GBP";
     const list = document.getElementById(side + "-list");
     const totalEl = document.getElementById(side + "-total");
     const subEl = document.getElementById(side + "-sub");
@@ -158,21 +143,19 @@ function render() {
     list.innerHTML = "";
     let total = 0;
 
-    data[side].forEach((item, index) => {
-      total += Number(item.price);
-
-      const stars = "★".repeat(item.rating || 1);
+    data[side].forEach((item, i) => {
+      total += item.price;
 
       const div = document.createElement("div");
       div.className = "item";
 
       div.innerHTML = `
         <div>
-          ${item.link ? `<a href="${item.link}" target="_blank">${item.name}</a>` : item.name}
+          ${item.name}
           <span class="price">${format(item.price, currency)}</span>
-          <span class="stars">${stars}</span>
+          <span class="stars">${"★".repeat(item.rating)}</span>
         </div>
-        <span class="delete" onclick="removeItem('${side}', ${index})">×</span>
+        <span class="delete" onclick="removeItem('${side}', ${i})">×</span>
       `;
 
       list.appendChild(div);
@@ -183,7 +166,6 @@ function render() {
   });
 }
 
-/* ---------- ADD ---------- */
 function addItem(side) {
   const name = document.getElementById(side + "-name").value.trim();
   const price = parseFloat(document.getElementById(side + "-price").value);
@@ -192,41 +174,35 @@ function addItem(side) {
   if (!name || isNaN(price)) return;
 
   data[side].push({ name, price, rating });
-
   save();
   render();
 
   setTimeout(() => {
     const items = document.querySelectorAll(`#${side}-list .item`);
-    const lastItem = items[items.length - 1];
-    if (lastItem) createSparkles(lastItem);
-  }, 50);
+    createSparkles(items[items.length - 1]);
+  }, 80);
 
   document.getElementById(side + "-name").value = "";
   document.getElementById(side + "-price").value = "";
 }
 
-/* ---------- REMOVE ---------- */
-function removeItem(side, index) {
+function removeItem(side, i) {
   const items = document.querySelectorAll(`#${side}-list .item`);
-  const itemEl = items[index];
+  const el = items[i];
 
-  if (!itemEl) return;
+  createSmoke(el);
 
-  createSmoke(itemEl);
-
-  itemEl.style.transition = "0.2s";
-  itemEl.style.opacity = "0";
-  itemEl.style.transform = "scale(0.9)";
+  el.style.opacity = "0";
+  el.style.transform = "scale(0.85)";
+  el.style.transition = "0.25s";
 
   setTimeout(() => {
-    data[side].splice(index, 1);
+    data[side].splice(i, 1);
     save();
     render();
-  }, 200);
+  }, 250);
 }
 
-/* ---------- INIT ---------- */
 window.onload = () => {
   load();
   render();
