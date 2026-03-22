@@ -1,8 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Wishlist</title>
+
+<link rel="stylesheet" href="styles.css?v=7">
+</head>
+
+<body>
+
+<h1>Our Wishlist</h1>
+
+<div class="container">
+
+  <!-- Vetannie -->
+  <div class="column">
+    <h2>Vetannie</h2>
+
+    <select id="her-currency" onchange="render()">
+      <option value="GBP">£ GBP</option>
+      <option value="USD">$ USD</option>
+    </select>
+
+    <div class="form">
+      <input id="her-name" placeholder="Item or link">
+      <input id="her-price" type="number" placeholder="Price">
+
+      <select id="her-rating">
+        <option value="1">★</option>
+        <option value="2">★★</option>
+        <option value="3">★★★</option>
+      </select>
+
+      <button onclick="addItem('her')">Add item</button>
+    </div>
+
+    <div class="list" id="her-list"></div>
+
+    <div class="total">
+      <span id="her-total">£0.00</span>
+      <div class="sub" id="her-sub"></div>
+    </div>
+  </div>
+
+  <!-- Barry -->
+  <div class="column">
+    <h2>Barry</h2>
+
+    <select id="him-currency" onchange="render()">
+      <option value="GBP">£ GBP</option>
+      <option value="USD">$ USD</option>
+    </select>
+
+    <div class="form">
+      <input id="him-name" placeholder="Item or link">
+      <input id="him-price" type="number" placeholder="Price">
+
+      <select id="him-rating">
+        <option value="1">★</option>
+        <option value="2">★★</option>
+        <option value="3">★★★</option>
+      </select>
+
+      <button onclick="addItem('him')">Add item</button>
+    </div>
+
+    <div class="list" id="him-list"></div>
+
+    <div class="total">
+      <span id="him-total">£0.00</span>
+      <div class="sub" id="him-sub"></div>
+    </div>
+  </div>
+
+</div>
+
 <script>
 let data = { her: [], him: [] };
 const rate = 1.27;
 
-// Load
+/* ---------- LOAD / SAVE ---------- */
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem("wishlist"));
@@ -12,26 +90,24 @@ function load() {
   } catch {}
 }
 
-// Save
 function save() {
   localStorage.setItem("wishlist", JSON.stringify(data));
 }
 
-// Format
+/* ---------- FORMAT ---------- */
 function format(amount, currency) {
   return currency === "GBP"
     ? `£${amount.toFixed(2)}`
     : `$${amount.toFixed(2)}`;
 }
 
-// Convert
 function convert(amount, currency) {
   return currency === "GBP"
     ? `$${(amount * rate).toFixed(2)}`
     : `£${(amount / rate).toFixed(2)}`;
 }
 
-// ✨ SPARKLES
+/* ---------- EFFECTS ---------- */
 function createSparkles(element) {
   const rect = element.getBoundingClientRect();
 
@@ -49,12 +125,10 @@ function createSparkles(element) {
     sparkle.style.top = rect.top + rect.height / 2 + "px";
 
     document.body.appendChild(sparkle);
-
     setTimeout(() => sparkle.remove(), 600);
   }
 }
 
-// 💨 SMOKE
 function createSmoke(element) {
   const rect = element.getBoundingClientRect();
 
@@ -62,23 +136,21 @@ function createSmoke(element) {
     const smoke = document.createElement("div");
     smoke.className = "smoke";
 
-    const x = (Math.random() - 0.5) * 40;
-    const y = (Math.random() - 0.5) * 40;
-
-    smoke.style.left = rect.left + rect.width / 2 + x + "px";
-    smoke.style.top = rect.top + rect.height / 2 + y + "px";
+    smoke.style.left = rect.left + rect.width / 2 + "px";
+    smoke.style.top = rect.top + rect.height / 2 + "px";
 
     document.body.appendChild(smoke);
-
     setTimeout(() => smoke.remove(), 500);
   }
 }
 
-// Render
+/* ---------- RENDER ---------- */
 function render() {
   ["her", "him"].forEach(side => {
 
-    const currency = document.getElementById(side + "-currency").value;
+    const currencyEl = document.getElementById(side + "-currency");
+    const currency = currencyEl ? currencyEl.value : "GBP";
+
     const list = document.getElementById(side + "-list");
     const totalEl = document.getElementById(side + "-total");
     const subEl = document.getElementById(side + "-sub");
@@ -111,7 +183,7 @@ function render() {
   });
 }
 
-// Add item ✨
+/* ---------- ADD ---------- */
 function addItem(side) {
   const name = document.getElementById(side + "-name").value.trim();
   const price = parseFloat(document.getElementById(side + "-price").value);
@@ -119,17 +191,11 @@ function addItem(side) {
 
   if (!name || isNaN(price)) return;
 
-  data[side].push({
-    name,
-    price,
-    rating,
-    link: name.startsWith("http") ? name : ""
-  });
+  data[side].push({ name, price, rating });
 
   save();
   render();
 
-  // ✨ Sparkle AFTER render
   setTimeout(() => {
     const items = document.querySelectorAll(`#${side}-list .item`);
     const lastItem = items[items.length - 1];
@@ -140,7 +206,7 @@ function addItem(side) {
   document.getElementById(side + "-price").value = "";
 }
 
-// Remove item 💨
+/* ---------- REMOVE ---------- */
 function removeItem(side, index) {
   const items = document.querySelectorAll(`#${side}-list .item`);
   const itemEl = items[index];
@@ -160,7 +226,12 @@ function removeItem(side, index) {
   }, 200);
 }
 
-// Init
-load();
-render();
+/* ---------- INIT ---------- */
+window.onload = () => {
+  load();
+  render();
+};
 </script>
+
+</body>
+</html>
