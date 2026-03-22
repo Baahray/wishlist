@@ -5,32 +5,34 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background: #f8f6f2;
+  background: #f3efe8;
   color: #1a1a1a;
 }
 
 /* Title */
 h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 56px;
-  font-weight: 500;
+  font-size: 48px;
   text-align: center;
   margin: 60px 0 40px;
-  letter-spacing: -1px;
 }
 
 /* Layout */
 .container {
   display: flex;
-  max-width: 1200px;
-  margin: auto;
-  padding: 40px;
-  gap: 60px;
+  max-width: 1100px;
+  margin: 40px auto;
+  gap: 40px;
+  padding: 0 20px;
 }
 
-/* Columns */
+/* Card columns */
 .column {
   flex: 1;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
 }
@@ -39,8 +41,18 @@ h1 {
 .column h2 {
   font-family: 'Playfair Display', serif;
   font-size: 32px;
-  font-weight: 500;
-  margin-bottom: 25px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Currency dropdown */
+select {
+  width: fit-content;
+  margin: 0 auto 20px;
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 1px solid #ddd;
+  background: transparent;
 }
 
 /* Inputs */
@@ -62,15 +74,15 @@ button {
   font-size: 13px;
   letter-spacing: 1px;
   cursor: pointer;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
-/* Item list */
+/* Items */
 .item {
   display: flex;
   justify-content: space-between;
-  padding: 14px 0;
-  border-bottom: 1px solid #e5e2dc;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
   font-size: 14px;
 }
 
@@ -98,57 +110,14 @@ button {
 
 /* Total */
 .total {
-  margin-top: 40px;
+  margin-top: auto;
+  padding-top: 20px;
   font-family: 'Playfair Display', serif;
   font-size: 22px;
-}
-/* Top bar */
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 0 20px;
+  text-align: right;
 }
 
-.topbar h1 {
-  font-size: 32px;
-  margin: 0;
-}
-
-/* Currency dropdown */
-select {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  background: transparent;
-}
-
-/* Sub total conversion */
-.sub {
-  font-size: 12px;
-  color: #888;
-  margin-top: 5px;
-}
-
-/* Title fix */
-h1 {
-  text-align: center;
-  font-family: 'Playfair Display', serif;
-  font-size: 48px;
-  margin: 60px 0 40px;
-}
-
-/* Currency dropdown */
-select {
-  margin-bottom: 15px;
-  padding: 8px;
-  border: 1px solid #ddd;
-  background: transparent;
-  font-size: 13px;
-}
-
-/* Sub total (conversion) */
+/* Conversion text */
 .sub {
   font-size: 12px;
   color: #888;
