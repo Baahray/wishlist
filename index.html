@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Our Wishlist</title>
 
-<!-- FORCE CSS REFRESH -->
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=5">
 </head>
 
 <body>
@@ -28,6 +27,14 @@
     <div class="form">
       <input id="her-name" placeholder="Item or link">
       <input id="her-price" type="number" placeholder="Price">
+
+      <!-- ⭐ Rating -->
+      <select id="her-rating">
+        <option value="1">★</option>
+        <option value="2">★★</option>
+        <option value="3">★★★</option>
+      </select>
+
       <button onclick="addItem('her')">Add item</button>
     </div>
 
@@ -53,6 +60,14 @@
     <div class="form">
       <input id="him-name" placeholder="Item or link">
       <input id="him-price" type="number" placeholder="Price">
+
+      <!-- ⭐ Rating -->
+      <select id="him-rating">
+        <option value="1">★</option>
+        <option value="2">★★</option>
+        <option value="3">★★★</option>
+      </select>
+
       <button onclick="addItem('him')">Add item</button>
     </div>
 
@@ -71,7 +86,7 @@
 let data = { her: [], him: [] };
 const rate = 1.27;
 
-// Load safely
+// Load
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem("wishlist"));
@@ -86,22 +101,22 @@ function save() {
   localStorage.setItem("wishlist", JSON.stringify(data));
 }
 
-// Format currency
+// Format
 function format(amount, currency) {
   return currency === "GBP"
     ? `£${amount.toFixed(2)}`
     : `$${amount.toFixed(2)}`;
 }
 
-// Convert currency
+// Convert
 function convert(amount, currency) {
   return currency === "GBP"
     ? `$${(amount * rate).toFixed(2)}`
     : `£${(amount / rate).toFixed(2)}`;
 }
 
-// Render UI
-function render() {
+// Render
+function render(sideTrigger = null, action = null) {
   ["her", "him"].forEach(side => {
 
     const currency = document.getElementById(side + "-currency").value;
@@ -115,13 +130,20 @@ function render() {
     data[side].forEach((item, index) => {
       total += Number(item.price);
 
+      const stars = "★".repeat(item.rating || 1);
+
       const div = document.createElement("div");
       div.className = "item";
+
+      if (action === "add" && side === sideTrigger) {
+        div.classList.add("add-anim");
+      }
 
       div.innerHTML = `
         <div>
           ${item.link ? `<a href="${item.link}" target="_blank">${item.name}</a>` : item.name}
           <span class="price">${format(item.price, currency)}</span>
+          <span class="stars">${stars}</span>
         </div>
         <span class="delete" onclick="removeItem('${side}', ${index})">×</span>
       `;
@@ -134,31 +156,41 @@ function render() {
   });
 }
 
-// Add item
+// Add
 function addItem(side) {
   const name = document.getElementById(side + "-name").value.trim();
   const price = parseFloat(document.getElementById(side + "-price").value);
+  const rating = parseInt(document.getElementById(side + "-rating").value);
 
   if (!name || isNaN(price)) return;
 
   data[side].push({
     name,
     price,
+    rating,
     link: name.startsWith("http") ? name : ""
   });
 
   save();
-  render();
+  render(side, "add");
 
   document.getElementById(side + "-name").value = "";
   document.getElementById(side + "-price").value = "";
 }
 
-// Remove item
+// Remove
 function removeItem(side, index) {
-  data[side].splice(index, 1);
-  save();
-  render();
+  const itemEl = document.querySelectorAll(`#${side}-list .item`)[index];
+
+  if (itemEl) {
+    itemEl.classList.add("remove-anim");
+
+    setTimeout(() => {
+      data[side].splice(index, 1);
+      save();
+      render();
+    }, 300);
+  }
 }
 
 // Init
