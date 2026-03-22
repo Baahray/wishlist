@@ -6,10 +6,10 @@ body {
   margin: 0;
   font-family: 'Inter', sans-serif;
 
-  /* Warm linen background */
-  background: linear-gradient(180deg, #f6f2eb 0%, #ece5db 100%);
+  /* Clean light background */
+  background: #f8f8f7;
 
-  color: #2f2a26;
+  color: #1c1c1c;
 }
 
 /* Title */
@@ -19,7 +19,6 @@ h1 {
   text-align: center;
   margin: 40px 20px 30px;
   letter-spacing: -0.5px;
-  color: #2a2623;
 }
 
 /* Layout */
@@ -27,7 +26,7 @@ h1 {
   display: flex;
   max-width: 1100px;
   margin: auto;
-  gap: 28px;
+  gap: 24px;
   padding: 0 20px 40px;
 }
 
@@ -35,38 +34,28 @@ h1 {
 .column {
   flex: 1;
   padding: 26px;
-  border-radius: 20px;
+  border-radius: 16px;
 
-  /* Soft tonal card */
-  background: #f8f4ee;
+  /* Clean soft card */
+  background: #ffffff;
 
-  /* Very subtle depth */
+  /* Modern shadow */
   box-shadow: 
-    0 6px 18px rgba(0,0,0,0.05),
-    0 1px 2px rgba(0,0,0,0.03);
+    0 6px 18px rgba(0,0,0,0.06),
+    0 1px 2px rgba(0,0,0,0.04);
 
   display: flex;
   flex-direction: column;
 
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
 }
 
-/* Slight variation between sides */
-.column:first-child {
-  background: #f6f1ea;
-}
-
-.column:last-child {
-  background: #f2ebe2;
-}
-
-/* Hover lift (very subtle, not “app-like”) */
+/* Subtle hover */
 @media (hover: hover) {
   .column:hover {
     transform: translateY(-3px);
     box-shadow: 
-      0 12px 28px rgba(0,0,0,0.08),
-      0 3px 6px rgba(0,0,0,0.04);
+      0 10px 25px rgba(0,0,0,0.08);
   }
 }
 
@@ -75,48 +64,44 @@ h1 {
   font-family: 'Playfair Display', serif;
   font-size: 26px;
   text-align: center;
-  margin-bottom: 14px;
-  color: #2f2a26;
+  margin-bottom: 12px;
 }
 
 /* Currency dropdown */
 select {
   width: fit-content;
-  margin: 0 auto 16px;
+  margin: 0 auto 14px;
   padding: 5px 10px;
   font-size: 12px;
 
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid #e5e5e5;
   background: transparent;
-
-  color: #5c534c;
 }
 
 /* Inputs */
 input {
   width: 100%;
-  padding: 11px;
+  padding: 12px;
   margin-bottom: 10px;
 
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid #e5e5e5;
   background: transparent;
 
   font-size: 14px;
-  color: #2f2a26;
 }
 
 input::placeholder {
-  color: #9b938b;
+  color: #999;
 }
 
 /* Button */
 button {
-  padding: 11px;
+  padding: 12px;
   border: none;
 
-  /* Muted charcoal instead of black */
-  background: #2f2a26;
-  color: #ffffff;
+  /* Clean dark button */
+  background: #1c1c1c;
+  color: white;
 
   font-size: 12px;
   letter-spacing: 1px;
@@ -124,11 +109,11 @@ button {
 
   margin-bottom: 18px;
 
-  transition: all 0.2s ease;
+  transition: 0.2s;
 }
 
 button:hover {
-  background: #4a433e;
+  background: #333;
 }
 
 /* Items */
@@ -137,8 +122,7 @@ button:hover {
   justify-content: space-between;
   padding: 10px 0;
 
-  /* ultra subtle divider */
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  border-bottom: 1px solid #f0f0f0;
 
   font-size: 14px;
 }
@@ -146,44 +130,48 @@ button:hover {
 /* Links */
 .item a {
   text-decoration: none;
-  color: #2f2a26;
+  color: #1c1c1c;
 }
 
 /* Price */
 .price {
   margin-left: 10px;
-  color: #8e857c;
+  color: #777;
   font-size: 13px;
+}
+
+/* Stars */
+.stars {
+  margin-left: 10px;
+  font-size: 12px;
+  color: #d4a373; /* subtle warm accent */
 }
 
 /* Delete */
 .delete {
   cursor: pointer;
-  opacity: 0.35;
-  color: #7a6f66;
+  opacity: 0.4;
 }
 
 .delete:hover {
   opacity: 1;
-  color: #b85c4a; /* muted clay red */
+  color: #d04a3a;
 }
 
 /* Total */
 .total {
   margin-top: auto;
-  padding-top: 16px;
+  padding-top: 14px;
 
   font-family: 'Playfair Display', serif;
   font-size: 20px;
   text-align: right;
-
-  color: #2a2623;
 }
 
 /* Conversion */
 .sub {
   font-size: 11px;
-  color: #9b938b;
+  color: #999;
   margin-top: 3px;
 }
 
@@ -210,10 +198,6 @@ button:hover {
 
   .column h2 {
     font-size: 22px;
-  }
-
-  button {
-    font-size: 11px;
   }
 
 }
