@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Our Wishlist</title>
 
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=6">
 </head>
 
 <body>
@@ -28,7 +28,6 @@
       <input id="her-name" placeholder="Item or link">
       <input id="her-price" type="number" placeholder="Price">
 
-      <!-- ⭐ Rating -->
       <select id="her-rating">
         <option value="1">★</option>
         <option value="2">★★</option>
@@ -61,7 +60,6 @@
       <input id="him-name" placeholder="Item or link">
       <input id="him-price" type="number" placeholder="Price">
 
-      <!-- ⭐ Rating -->
       <select id="him-rating">
         <option value="1">★</option>
         <option value="2">★★</option>
@@ -116,7 +114,7 @@ function convert(amount, currency) {
 }
 
 // Render
-function render(sideTrigger = null, action = null) {
+function render() {
   ["her", "him"].forEach(side => {
 
     const currency = document.getElementById(side + "-currency").value;
@@ -135,10 +133,6 @@ function render(sideTrigger = null, action = null) {
       const div = document.createElement("div");
       div.className = "item";
 
-      if (action === "add" && side === sideTrigger) {
-        div.classList.add("add-anim");
-      }
-
       div.innerHTML = `
         <div>
           ${item.link ? `<a href="${item.link}" target="_blank">${item.name}</a>` : item.name}
@@ -156,7 +150,7 @@ function render(sideTrigger = null, action = null) {
   });
 }
 
-// Add
+// Add item (FIXED animation)
 function addItem(side) {
   const name = document.getElementById(side + "-name").value.trim();
   const price = parseFloat(document.getElementById(side + "-price").value);
@@ -172,25 +166,35 @@ function addItem(side) {
   });
 
   save();
-  render(side, "add");
+  render();
+
+  // ✨ Animate AFTER render
+  setTimeout(() => {
+    const items = document.querySelectorAll(`#${side}-list .item`);
+    const lastItem = items[items.length - 1];
+    if (lastItem) {
+      lastItem.classList.add("add-anim");
+    }
+  }, 10);
 
   document.getElementById(side + "-name").value = "";
   document.getElementById(side + "-price").value = "";
 }
 
-// Remove
+// Remove item (FIXED animation)
 function removeItem(side, index) {
-  const itemEl = document.querySelectorAll(`#${side}-list .item`)[index];
+  const items = document.querySelectorAll(`#${side}-list .item`);
+  const itemEl = items[index];
 
-  if (itemEl) {
-    itemEl.classList.add("remove-anim");
+  if (!itemEl) return;
 
-    setTimeout(() => {
-      data[side].splice(index, 1);
-      save();
-      render();
-    }, 300);
-  }
+  itemEl.classList.add("remove-anim");
+
+  setTimeout(() => {
+    data[side].splice(index, 1);
+    save();
+    render();
+  }, 300);
 }
 
 // Init
