@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Our Wishlist</title>
-
-<link rel="stylesheet" href="styles.css?v=14">
+<link rel="stylesheet" href="styles.css?v=18">
 </head>
 
 <body>
@@ -101,18 +100,23 @@ function convert(amount, currency) {
 
 function createSparkles(el) {
   const r = el.getBoundingClientRect();
+
   for (let i = 0; i < 20; i++) {
     const s = document.createElement("div");
     s.className = "sparkle";
 
     const a = Math.random() * Math.PI * 2;
-    const d = Math.random() * 80 + 20;
+    const d = Math.random() * 40 + 10;
 
     s.style.setProperty("--x", Math.cos(a) * d + "px");
     s.style.setProperty("--y", Math.sin(a) * d + "px");
 
     s.style.left = r.left + r.width / 2 + "px";
     s.style.top = r.top + r.height / 2 + "px";
+
+    const size = Math.random() * 6 + 6;
+    s.style.width = size + "px";
+    s.style.height = size + "px";
 
     document.body.appendChild(s);
     setTimeout(() => s.remove(), 1200);
@@ -121,6 +125,7 @@ function createSparkles(el) {
 
 function createSmoke(el) {
   const r = el.getBoundingClientRect();
+
   for (let i = 0; i < 16; i++) {
     const s = document.createElement("div");
     s.className = "smoke";
@@ -150,7 +155,7 @@ function render() {
       div.className = "item";
 
       div.innerHTML = `
-        <div>
+        <div class="item-text">
           ${item.name}
           <span class="price">${format(item.price, currency)}</span>
           <span class="stars">${"★".repeat(item.rating)}</span>
@@ -179,7 +184,10 @@ function addItem(side) {
 
   setTimeout(() => {
     const items = document.querySelectorAll(`#${side}-list .item`);
-    createSparkles(items[items.length - 1]);
+    const item = items[items.length - 1];
+    const textEl = item.querySelector(".item-text");
+
+    if (textEl) createSparkles(textEl);
   }, 80);
 
   document.getElementById(side + "-name").value = "";
@@ -189,6 +197,8 @@ function addItem(side) {
 function removeItem(side, i) {
   const items = document.querySelectorAll(`#${side}-list .item`);
   const el = items[i];
+
+  if (!el) return;
 
   createSmoke(el);
 
