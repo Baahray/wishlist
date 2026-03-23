@@ -74,32 +74,26 @@
 
 </div>
 
-<script>
+<script type="module">
 
-/* 🔥 FORCE VERSION UPDATE */
-const SITE_VERSION = "v3";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-if (localStorage.getItem("site_version") !== SITE_VERSION) {
-  localStorage.setItem("site_version", SITE_VERSION);
-  location.reload();
-}
+const firebaseConfig = {
+  apiKey: "AIzaSyDYP42L9-Ghb0O2yTC82pSRPKBwPtR5ehE",
+  authDomain: "wishlist-6c440.firebaseapp.com",
+  projectId: "wishlist-6c440",
+  storageBucket: "wishlist-6c440.firebasestorage.app",
+  messagingSenderId: "1034747393035",
+  appId: "1:1034747393035:web:24166b3cc58d0a5950030e"
+};
 
-/* ---------- DATA ---------- */
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const wishlistRef = doc(db, "wishlist", "shared");
+
 let data = { her: [], him: [] };
 const rate = 1.27;
-
-/* ---------- LOAD ---------- */
-function load() {
-  try {
-    const saved = JSON.parse(localStorage.getItem("wishlist"));
-    if (saved && saved.her && saved.him) data = saved;
-  } catch {}
-}
-
-/* ---------- SAVE ---------- */
-function save() {
-  localStorage.setItem("wishlist", JSON.stringify(data));
-}
 
 /* ---------- FORMAT ---------- */
 function format(amount, currency) {
@@ -114,65 +108,19 @@ function convert(amount, currency) {
     : "£" + (amount / rate).toFixed(2);
 }
 
-/* ---------- SPARKLES ---------- */
-function createSparkles(el) {
-  const r = el.getBoundingClientRect();
-
-  for (let i = 0; i < 20; i++) {
-    const s = document.createElement("div");
-    s.className = "sparkle";
-
-    const a = Math.random() * Math.PI * 2;
-    const d = Math.random() * 40 + 10;
-
-    s.style.setProperty("--x", Math.cos(a) * d + "px");
-    s.style.setProperty("--y", Math.sin(a) * d + "px");
-
-    s.style.left = (r.left + r.width / 2) + "px";
-    s.style.top = (r.top + r.height / 2) + "px";
-
-    const size = Math.random() * 6 + 6;
-    s.style.width = size + "px";
-    s.style.height = size + "px";
-
-    document.body.appendChild(s);
-    setTimeout(() => s.remove(), 1200);
-  }
-}
-
-/* ---------- SMOKE ---------- */
-function createSmoke(el) {
-  const r = el.getBoundingClientRect();
-
-  for (let i = 0; i < 16; i++) {
-    const s = document.createElement("div");
-    s.className = "smoke";
-
-    s.style.left = (r.left + r.width / 2 + (Math.random() - 0.5) * 80) + "px";
-    s.style.top = (r.top + r.height / 2 + (Math.random() - 0.5) * 80) + "px";
-
-    document.body.appendChild(s);
-    setTimeout(() => s.remove(), 700);
-  }
-}
-
 /* ---------- RENDER ---------- */
 function render() {
-  ["her", "him"].forEach(function(side) {
+  ["her", "him"].forEach(side => {
 
-    const currencyEl = document.getElementById(side + "-currency");
-    const currency = currencyEl ? currencyEl.value : "GBP";
-
+    const currency = document.getElementById(side + "-currency").value;
     const list = document.getElementById(side + "-list");
     const totalEl = document.getElementById(side + "-total");
     const subEl = document.getElementById(side + "-sub");
 
-    if (!list) return;
-
     list.innerHTML = "";
     let total = 0;
 
-    data[side].forEach(function(item, i) {
+    data[side].forEach((item, i) => {
       total += Number(item.price);
 
       const div = document.createElement("div");
@@ -195,56 +143,42 @@ function render() {
   });
 }
 
+/* ---------- SAVE ---------- */
+async function save() {
+  await setDoc(wishlistRef, data);
+}
+
 /* ---------- ADD ---------- */
-function addItem(side) {
+window.addItem = async function(side) {
   const name = document.getElementById(side + "-name").value.trim();
   const price = parseFloat(document.getElementById(side + "-price").value) || 0;
   const rating = parseInt(document.getElementById(side + "-rating").value);
 
   if (!name) return;
 
-  data[side].push({ name: name, price: price, rating: rating });
+  data[side].push({ name, price, rating });
 
-  save();
-  render();
-
-  setTimeout(function() {
-    const items = document.querySelectorAll("#" + side + "-list .item");
-    const item = items[items.length - 1];
-    const textEl = item.querySelector(".item-text");
-
-    if (textEl) createSparkles(textEl);
-  }, 80);
+  await save();
 
   document.getElementById(side + "-name").value = "";
   document.getElementById(side + "-price").value = "";
-}
+};
 
 /* ---------- REMOVE ---------- */
-function removeItem(side, i) {
-  const items = document.querySelectorAll("#" + side + "-list .item");
-  const el = items[i];
-
-  if (!el) return;
-
-  createSmoke(el);
-
-  el.style.opacity = "0";
-  el.style.transform = "scale(0.85)";
-  el.style.transition = "0.25s";
-
-  setTimeout(function() {
-    data[side].splice(i, 1);
-    save();
-    render();
-  }, 250);
-}
-
-/* ---------- INIT ---------- */
-window.onload = function() {
-  load();
-  render();
+window.removeItem = async function(side, i) {
+  data[side].splice(i, 1);
+  await save();
 };
+
+/* ---------- REALTIME ---------- */
+onSnapshot(wishlistRef, (docSnap) => {
+  if (docSnap.exists()) {
+    data = docSnap.data();
+    render();
+  } else {
+    save(); // create it first time
+  }
+});
 
 </script>
 
