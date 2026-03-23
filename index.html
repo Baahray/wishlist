@@ -123,12 +123,26 @@ function render() {
     data[side].forEach((item, i) => {
       total += Number(item.price);
 
+      const isLink = item.name.startsWith("http");
+      let displayName = item.name;
+
+      if (isLink) {
+        try {
+          const url = new URL(item.name);
+          displayName = url.hostname.replace("www.", "");
+        } catch {}
+      }
+
       const div = document.createElement("div");
       div.className = "item";
 
       div.innerHTML = `
         <div class="item-text">
-          ${item.name}
+          ${
+            isLink
+              ? `<a href="${item.name}" target="_blank">${displayName}</a>`
+              : displayName
+          }
           <span class="price">${format(item.price, currency)}</span>
           <span class="stars">${"★".repeat(item.rating)}</span>
         </div>
@@ -176,7 +190,7 @@ onSnapshot(wishlistRef, (docSnap) => {
     data = docSnap.data();
     render();
   } else {
-    save(); // create it first time
+    save();
   }
 });
 
