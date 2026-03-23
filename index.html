@@ -1,105 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Shared Wishlist</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      max-width: 500px;
-      margin: auto;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Our Wishlist</title>
 
-    input {
-      padding: 10px;
-      width: 70%;
-    }
-
-    button {
-      padding: 10px;
-      cursor: pointer;
-    }
-
-    ul {
-      margin-top: 20px;
-      padding: 0;
-      list-style: none;
-    }
-
-    li {
-      background: #f2f2f2;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeIn 0.3s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
+<link rel="stylesheet" href="styles.css?v=20">
 </head>
+
 <body>
 
-  <h2>Shared Wishlist</h2>
+<h1>Our Wishlist</h1>
 
-  <input id="itemInput" placeholder="Add item..." />
-  <button onclick="addItem()">Add</button>
+<div class="container">
 
-  <ul id="list"></ul>
+  <div class="column">
+    <h2>Vetannie</h2>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+    <select id="her-currency" onchange="render()">
+      <option value="GBP">£ GBP</option>
+      <option value="USD">$ USD</option>
+    </select>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDYP42L9-Ghb0O2yTC82pSRPKBwPtR5ehE",
-      authDomain: "wishlist-6c440.firebaseapp.com",
-      projectId: "wishlist-6c440",
-      storageBucket: "wishlist-6c440.firebasestorage.app",
-      messagingSenderId: "1034747393035",
-      appId: "1:1034747393035:web:24166b3cc58d0a5950030e",
-      measurementId: "G-CKGY9M9N49"
-    };
+    <div class="form">
+      <input id="her-name" placeholder="Item or link">
+      <input id="her-price" type="number" placeholder="Price">
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+      <select id="her-rating">
+        <option value="1">★</option>
+        <option value="2">★★</option>
+        <option value="3">★★★</option>
+      </select>
 
-    // Add item
-    window.addItem = async function () {
-      const input = document.getElementById("itemInput");
-      if (!input.value) return;
+      <button onclick="addItem('her')">Add item</button>
+    </div>
 
-      await addDoc(collection(db, "wishlist_items"), {
-        name: input.value,
-        createdAt: Date.now()
-      });
+    <div class="list" id="her-list"></div>
 
-      input.value = "";
-    };
+    <div class="total">
+      <span id="her-total">£0.00</span>
+      <div class="sub" id="her-sub"></div>
+    </div>
+  </div>
 
-    // Real-time updates
-    onSnapshot(collection(db, "wishlist_items"), (snapshot) => {
-      const list = document.getElementById("list");
-      list.innerHTML = "";
+  <div class="column">
+    <h2>Barry</h2>
 
-      snapshot.forEach(doc => {
-        const item = doc.data();
+    <select id="him-currency" onchange="render()">
+      <option value="GBP">£ GBP</option>
+      <option value="USD">$ USD</option>
+    </select>
 
-        const li = document.createElement("li");
-        li.textContent = item.name;
+    <div class="form">
+      <input id="him-name" placeholder="Item or link">
+      <input id="him-price" type="number" placeholder="Price">
 
-        list.appendChild(li);
-      });
+      <select id="him-rating">
+        <option value="1">★</option>
+        <option value="2">★★</option>
+        <option value="3">★★★</option>
+      </select>
+
+      <button onclick="addItem('him')">Add item</button>
+    </div>
+
+    <div class="list" id="him-list"></div>
+
+    <div class="total">
+      <span id="him-total">£0.00</span>
+      <div class="sub" id="him-sub"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+/* 🔥 FORCE VERSION UPDATE */
+const SITE_VERSION = "v3";
+
+if (localStorage.getItem("site_version") !== SITE_VERSION) {
+  localStorage.setItem("site_version", SITE_VERSION);
+  location.reload();
+}
+
+/* ---------- DATA ---------- */
+let data = { her: [], him: [] };
+const rate = 1.27;
+
+/* ---------- LOAD ---------- */
+function load() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("wishlist"));
+    if (saved && saved.her && saved.him) data = saved;
+  } catch {}
+}
+
+/* ---------- SAVE ---------- */
+function save() {
+  localStorage.setItem("wishlist", JSON.stringify(data));
+}
+
+/* ---------- FORMAT ---------- */
+function format(amount, currency) {
+  return currency === "GBP"
+    ? "£" + amount.toFixed(2)
+    : "$" + amount.toFixed(2);
+}
+
+function convert(amount, currency) {
+  return currency === "GBP"
+    ? "$" + (amount * rate).toFixed(2)
+    : "£" + (amount / rate).toFixed(2);
+}
+
+/* ---------- SPARKLES ---------- */
+function createSparkles(el) {
+  const r = el.getBoundingClientRect();
+
+  for (let i = 0; i < 20; i++) {
+    const s = document.createElement("div");
+    s.className = "sparkle";
+
+    const a = Math.random() * Math.PI * 2;
+    const d = Math.random() * 40 + 10;
+
+    s.style.setProperty("--x", Math.cos(a) * d + "px");
+    s.style.setProperty("--y", Math.sin(a) * d + "px");
+
+    s.style.left = (r.left + r.width / 2) + "px";
+    s.style.top = (r.top + r.height / 2) + "px";
+
+    const size = Math.random() * 6 + 6;
+    s.style.width = size + "px";
+    s.style.height = size + "px";
+
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1200);
+  }
+}
+
+/* ---------- SMOKE ---------- */
+function createSmoke(el) {
+  const r = el.getBoundingClientRect();
+
+  for (let i = 0; i < 16; i++) {
+    const s = document.createElement("div");
+    s.className = "smoke";
+
+    s.style.left = (r.left + r.width / 2 + (Math.random() - 0.5) * 80) + "px";
+    s.style.top = (r.top + r.height / 2 + (Math.random() - 0.5) * 80) + "px";
+
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 700);
+  }
+}
+
+/* ---------- RENDER ---------- */
+function render() {
+  ["her", "him"].forEach(function(side) {
+
+    const currencyEl = document.getElementById(side + "-currency");
+    const currency = currencyEl ? currencyEl.value : "GBP";
+
+    const list = document.getElementById(side + "-list");
+    const totalEl = document.getElementById(side + "-total");
+    const subEl = document.getElementById(side + "-sub");
+
+    if (!list) return;
+
+    list.innerHTML = "";
+    let total = 0;
+
+    data[side].forEach(function(item, i) {
+      total += Number(item.price);
+
+      const div = document.createElement("div");
+      div.className = "item";
+
+      div.innerHTML = `
+        <div class="item-text">
+          ${item.name}
+          <span class="price">${format(item.price, currency)}</span>
+          <span class="stars">${"★".repeat(item.rating)}</span>
+        </div>
+        <span class="delete" onclick="removeItem('${side}', ${i})">×</span>
+      `;
+
+      list.appendChild(div);
     });
-  </script>
+
+    totalEl.textContent = format(total, currency);
+    subEl.textContent = convert(total, currency);
+  });
+}
+
+/* ---------- ADD ---------- */
+function addItem(side) {
+  const name = document.getElementById(side + "-name").value.trim();
+  const price = parseFloat(document.getElementById(side + "-price").value) || 0;
+  const rating = parseInt(document.getElementById(side + "-rating").value);
+
+  if (!name) return;
+
+  data[side].push({ name: name, price: price, rating: rating });
+
+  save();
+  render();
+
+  setTimeout(function() {
+    const items = document.querySelectorAll("#" + side + "-list .item");
+    const item = items[items.length - 1];
+    const textEl = item.querySelector(".item-text");
+
+    if (textEl) createSparkles(textEl);
+  }, 80);
+
+  document.getElementById(side + "-name").value = "";
+  document.getElementById(side + "-price").value = "";
+}
+
+/* ---------- REMOVE ---------- */
+function removeItem(side, i) {
+  const items = document.querySelectorAll("#" + side + "-list .item");
+  const el = items[i];
+
+  if (!el) return;
+
+  createSmoke(el);
+
+  el.style.opacity = "0";
+  el.style.transform = "scale(0.85)";
+  el.style.transition = "0.25s";
+
+  setTimeout(function() {
+    data[side].splice(i, 1);
+    save();
+    render();
+  }, 250);
+}
+
+/* ---------- INIT ---------- */
+window.onload = function() {
+  load();
+  render();
+};
+
+</script>
 
 </body>
 </html>
