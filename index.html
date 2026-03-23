@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Our Wishlist</title>
-<link rel="stylesheet" href="styles.css?v=18">
+
+<link rel="stylesheet" href="styles.css?v=20">
 </head>
 
 <body>
@@ -74,9 +75,20 @@
 </div>
 
 <script>
+
+/* 🔥 FORCE VERSION UPDATE */
+const SITE_VERSION = "v3";
+
+if (localStorage.getItem("site_version") !== SITE_VERSION) {
+  localStorage.setItem("site_version", SITE_VERSION);
+  location.reload();
+}
+
+/* ---------- DATA ---------- */
 let data = { her: [], him: [] };
 const rate = 1.27;
 
+/* ---------- LOAD ---------- */
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem("wishlist"));
@@ -84,20 +96,25 @@ function load() {
   } catch {}
 }
 
+/* ---------- SAVE ---------- */
 function save() {
   localStorage.setItem("wishlist", JSON.stringify(data));
 }
 
+/* ---------- FORMAT ---------- */
 function format(amount, currency) {
-  return currency === "GBP" ? `£${amount.toFixed(2)}` : `$${amount.toFixed(2)}`;
+  return currency === "GBP"
+    ? "£" + amount.toFixed(2)
+    : "$" + amount.toFixed(2);
 }
 
 function convert(amount, currency) {
   return currency === "GBP"
-    ? `$${(amount * rate).toFixed(2)}`
-    : `£${(amount / rate).toFixed(2)}`;
+    ? "$" + (amount * rate).toFixed(2)
+    : "£" + (amount / rate).toFixed(2);
 }
 
+/* ---------- SPARKLES ---------- */
 function createSparkles(el) {
   const r = el.getBoundingClientRect();
 
@@ -111,8 +128,8 @@ function createSparkles(el) {
     s.style.setProperty("--x", Math.cos(a) * d + "px");
     s.style.setProperty("--y", Math.sin(a) * d + "px");
 
-    s.style.left = r.left + r.width / 2 + "px";
-    s.style.top = r.top + r.height / 2 + "px";
+    s.style.left = (r.left + r.width / 2) + "px";
+    s.style.top = (r.top + r.height / 2) + "px";
 
     const size = Math.random() * 6 + 6;
     s.style.width = size + "px";
@@ -123,6 +140,7 @@ function createSparkles(el) {
   }
 }
 
+/* ---------- SMOKE ---------- */
 function createSmoke(el) {
   const r = el.getBoundingClientRect();
 
@@ -130,26 +148,32 @@ function createSmoke(el) {
     const s = document.createElement("div");
     s.className = "smoke";
 
-    s.style.left = r.left + r.width / 2 + (Math.random() - 0.5) * 80 + "px";
-    s.style.top = r.top + r.height / 2 + (Math.random() - 0.5) * 80 + "px";
+    s.style.left = (r.left + r.width / 2 + (Math.random() - 0.5) * 80) + "px";
+    s.style.top = (r.top + r.height / 2 + (Math.random() - 0.5) * 80) + "px";
 
     document.body.appendChild(s);
     setTimeout(() => s.remove(), 700);
   }
 }
 
+/* ---------- RENDER ---------- */
 function render() {
-  ["her", "him"].forEach(side => {
-    const currency = document.getElementById(side + "-currency")?.value || "GBP";
+  ["her", "him"].forEach(function(side) {
+
+    const currencyEl = document.getElementById(side + "-currency");
+    const currency = currencyEl ? currencyEl.value : "GBP";
+
     const list = document.getElementById(side + "-list");
     const totalEl = document.getElementById(side + "-total");
     const subEl = document.getElementById(side + "-sub");
 
+    if (!list) return;
+
     list.innerHTML = "";
     let total = 0;
 
-    data[side].forEach((item, i) => {
-      total += item.price;
+    data[side].forEach(function(item, i) {
+      total += Number(item.price);
 
       const div = document.createElement("div");
       div.className = "item";
@@ -171,19 +195,21 @@ function render() {
   });
 }
 
+/* ---------- ADD ---------- */
 function addItem(side) {
   const name = document.getElementById(side + "-name").value.trim();
-  const price = parseFloat(document.getElementById(side + "-price").value);
+  const price = parseFloat(document.getElementById(side + "-price").value) || 0;
   const rating = parseInt(document.getElementById(side + "-rating").value);
 
-  if (!name || isNaN(price)) return;
+  if (!name) return;
 
-  data[side].push({ name, price, rating });
+  data[side].push({ name: name, price: price, rating: rating });
+
   save();
   render();
 
-  setTimeout(() => {
-    const items = document.querySelectorAll(`#${side}-list .item`);
+  setTimeout(function() {
+    const items = document.querySelectorAll("#" + side + "-list .item");
     const item = items[items.length - 1];
     const textEl = item.querySelector(".item-text");
 
@@ -194,8 +220,9 @@ function addItem(side) {
   document.getElementById(side + "-price").value = "";
 }
 
+/* ---------- REMOVE ---------- */
 function removeItem(side, i) {
-  const items = document.querySelectorAll(`#${side}-list .item`);
+  const items = document.querySelectorAll("#" + side + "-list .item");
   const el = items[i];
 
   if (!el) return;
@@ -206,17 +233,19 @@ function removeItem(side, i) {
   el.style.transform = "scale(0.85)";
   el.style.transition = "0.25s";
 
-  setTimeout(() => {
+  setTimeout(function() {
     data[side].splice(i, 1);
     save();
     render();
   }, 250);
 }
 
-window.onload = () => {
+/* ---------- INIT ---------- */
+window.onload = function() {
   load();
   render();
 };
+
 </script>
 
 </body>
