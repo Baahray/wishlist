@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-
 <title>Our Wishlist</title>
 
-<link rel="stylesheet" href="styles.css?v=22">
-
+<link rel="stylesheet" href="styles.css?v=20">
 </head>
 
 <body>
@@ -83,7 +80,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/fireba
 import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyDYP42L9-Ghb0O2yTC82pSRPKBwPtR5ehE",
   authDomain: "wishlist-6c440.firebaseapp.com",
   projectId: "wishlist-6c440",
   storageBucket: "wishlist-6c440.firebasestorage.app",
@@ -96,34 +93,24 @@ const db = getFirestore(app);
 const wishlistRef = doc(db, "wishlist", "shared");
 
 let data = { her: [], him: [] };
-
 const rate = 1.27;
 
-
-/* FORMAT */
-
+/* ---------- FORMAT ---------- */
 function format(amount, currency) {
-
   return currency === "GBP"
     ? "£" + amount.toFixed(2)
     : "$" + amount.toFixed(2);
-
 }
 
 function convert(amount, currency) {
-
   return currency === "GBP"
     ? "$" + (amount * rate).toFixed(2)
     : "£" + (amount / rate).toFixed(2);
-
 }
 
-
-/* RENDER */
-
+/* ---------- RENDER ---------- */
 function render() {
-
-  ["her","him"].forEach(side => {
+  ["her", "him"].forEach(side => {
 
     const currency = document.getElementById(side + "-currency").value;
     const list = document.getElementById(side + "-list");
@@ -131,15 +118,12 @@ function render() {
     const subEl = document.getElementById(side + "-sub");
 
     list.innerHTML = "";
-
     let total = 0;
 
     data[side].forEach((item, i) => {
-
       total += Number(item.price);
 
       const isLink = item.name.startsWith("http");
-
       let displayName = item.name;
 
       if (isLink) {
@@ -150,15 +134,14 @@ function render() {
       }
 
       const div = document.createElement("div");
-
-      div.className = "item magic";
+      div.className = "item";
 
       div.innerHTML = `
         <div class="item-text">
           ${
             isLink
-            ? `<a href="${item.name}" target="_blank">${displayName}</a>`
-            : displayName
+              ? `<a href="${item.name}" target="_blank">${displayName}</a>`
+              : displayName
           }
           <span class="price">${format(item.price, currency)}</span>
           <span class="stars">${"★".repeat(item.rating)}</span>
@@ -167,32 +150,20 @@ function render() {
       `;
 
       list.appendChild(div);
-
-      sparkleReveal(div);
-
     });
 
     totalEl.textContent = format(total, currency);
     subEl.textContent = convert(total, currency);
-
   });
-
 }
 
-
-/* SAVE */
-
+/* ---------- SAVE ---------- */
 async function save() {
-
   await setDoc(wishlistRef, data);
-
 }
 
-
-/* ADD */
-
+/* ---------- ADD ---------- */
 window.addItem = async function(side) {
-
   const name = document.getElementById(side + "-name").value.trim();
   const price = parseFloat(document.getElementById(side + "-price").value) || 0;
   const rating = parseInt(document.getElementById(side + "-rating").value);
@@ -205,75 +176,23 @@ window.addItem = async function(side) {
 
   document.getElementById(side + "-name").value = "";
   document.getElementById(side + "-price").value = "";
-
 };
 
-
-/* REMOVE */
-
+/* ---------- REMOVE ---------- */
 window.removeItem = async function(side, i) {
-
   data[side].splice(i, 1);
-
   await save();
-
 };
 
-
-/* REALTIME */
-
+/* ---------- REALTIME ---------- */
 onSnapshot(wishlistRef, (docSnap) => {
-
   if (docSnap.exists()) {
-
     data = docSnap.data();
-
     render();
-
   } else {
-
     save();
-
   }
-
 });
-
-</script>
-
-
-<script>
-
-/* SPARKLE REVEAL */
-
-function sparkleReveal(element) {
-
-  const rect = element.getBoundingClientRect();
-
-  for (let i = 0; i < 16; i++) {
-
-    const s = document.createElement("div");
-
-    s.className = "sparkle";
-
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
-
-    const angle = Math.random() * Math.PI * 2;
-    const distance = 25 + Math.random() * 50;
-
-    s.style.left = x + "px";
-    s.style.top = y + "px";
-
-    s.style.setProperty("--x", Math.cos(angle) * distance + "px");
-    s.style.setProperty("--y", Math.sin(angle) * distance + "px");
-
-    document.body.appendChild(s);
-
-    setTimeout(() => s.remove(), 1200);
-
-  }
-
-}
 
 </script>
 
