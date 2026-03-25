@@ -259,3 +259,17 @@ button:hover {
     transform: scale(3);
   }
 }
+/* ---------- ITEM MAGIC APPEAR ---------- */
+
+.item.magic {
+  opacity: 0;
+  transform: translateY(8px) scale(0.95);
+  animation: itemAppear 400ms ease forwards;
+}
+
+@keyframes itemAppear {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
