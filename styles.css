@@ -1,275 +1,182 @@
-/* ---------- FONTS ---------- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;600&display=swap');
-
-/* ---------- BASE ---------- */
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: #f5efe8;
-  color: #2b2b2b;
+body{
+margin:0;
+font-family:Inter,sans-serif;
+background:#f5efe8;
+color:#2b2b2b;
 }
 
-/* ---------- TITLE ---------- */
-h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 40px;
-  text-align: center;
-  margin: 40px 20px 25px;
+h1{
+font-family:"Playfair Display",serif;
+font-size:40px;
+text-align:center;
+margin:40px 20px 25px;
 }
 
-/* ---------- LAYOUT ---------- */
-.container {
-  display: flex;
-  justify-content: center;
-  max-width: 1000px;
-  margin: auto;
-  gap: 30px;
-  padding: 0 20px 40px;
+.container{
+display:flex;
+justify-content:center;
+max-width:1000px;
+margin:auto;
+gap:30px;
+padding:0 20px 40px;
 }
 
-/* ---------- CARDS ---------- */
-.column {
-  flex: 1;
-  padding: 26px;
-  border-radius: 10px;
-
-  background: #f9f4ee;
-  border: 1px solid #e3dbd2;
-
-  display: flex;
-  flex-direction: column;
+.column{
+flex:1;
+padding:26px;
+border-radius:10px;
+background:#f9f4ee;
+border:1px solid #e3dbd2;
+display:flex;
+flex-direction:column;
 }
 
-/* ---------- NAMES ---------- */
-.column h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 26px;
-  text-align: center;
-  margin-bottom: 10px;
+.column h2{
+font-family:"Playfair Display",serif;
+font-size:26px;
+text-align:center;
+margin-bottom:10px;
 }
 
-/* ---------- DROPDOWN ---------- */
-select {
-  display: block;
-  margin: 0 auto 15px;
-  padding: 6px 10px;
-  font-size: 13px;
-
-  border: 1px solid #d8cfc5;
-  background: transparent;
-
-  /* 📱 stop zoom */
-  font-size: 16px;
+select{
+display:block;
+margin:0 auto 15px;
+padding:6px 10px;
+border:1px solid #d8cfc5;
+background:transparent;
+font-size:16px;
 }
 
-/* ---------- FORM ---------- */
-.form {
-  max-width: 240px;
-  margin: 0 auto 20px;
+.form{
+max-width:240px;
+margin:0 auto 20px;
 }
 
-/* ---------- INPUTS ---------- */
-input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-
-  border: 1px solid #e0d8cf;
-  background: #fffdf9;
-
-  font-size: 16px; /* 📱 stop zoom */
+input{
+width:100%;
+padding:10px;
+margin-bottom:10px;
+border:1px solid #e0d8cf;
+background:#fffdf9;
+font-size:16px;
 }
 
-/* ---------- BUTTON ---------- */
-button {
-  width: 100%;
-  padding: 10px;
-
-  border: none;
-  background: #c8a58a;
-  color: white;
-
-  cursor: pointer;
-  transition: 0.2s;
+button{
+width:100%;
+padding:10px;
+border:none;
+background:#c8a58a;
+color:white;
+cursor:pointer;
 }
 
-button:hover {
-  background: #b89378;
+button:hover{
+background:#b89378;
 }
 
-/* ---------- LIST ---------- */
-.list {
-  margin-bottom: 15px;
+.list{
+margin-bottom:15px;
 }
 
-/* ---------- ITEM ---------- */
-.item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 10px 0;
-  border-bottom: 1px solid #eee6dd;
-
-  font-size: 14px;
+.item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 0;
+border-bottom:1px solid #eee6dd;
+font-size:14px;
+opacity:1;
+transition:opacity .35s ease;
 }
 
-/* TEXT GROUP */
-.item-text {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.item.hidden{
+opacity:0;
 }
 
-/* PRICE */
-.price {
-  font-size: 12px;
-  color: #9a8f85;
+.item-text{
+display:flex;
+align-items:center;
+gap:8px;
 }
 
-/* STARS */
-.stars {
-  font-size: 12px;
-  color: #a7c7e7; /* ❄️ cool blue tone */
+.price{
+font-size:12px;
+color:#9a8f85;
 }
 
-/* DELETE */
-.delete {
-  cursor: pointer;
-  opacity: 0.4;
-  font-size: 16px;
+.stars{
+font-size:12px;
+color:#a7c7e7;
 }
 
-.delete:hover {
-  opacity: 1;
-  color: #b85c4a;
+.delete{
+cursor:pointer;
+opacity:.4;
+font-size:16px;
 }
 
-/* ---------- TOTAL ---------- */
-.total {
-  margin-top: auto;
-  padding-top: 10px;
-
-  font-family: 'Playfair Display', serif;
-  text-align: right;
-  font-size: 20px;
+.delete:hover{
+opacity:1;
+color:#b85c4a;
 }
 
-/* ---------- CONVERSION ---------- */
-.sub {
-  font-size: 10px;
-  color: #b8afa6;
-  margin-top: 4px;
+.total{
+margin-top:auto;
+padding-top:10px;
+font-family:"Playfair Display",serif;
+text-align:right;
+font-size:20px;
 }
 
-/* ---------- MOBILE ---------- */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 28px;
-  }
-
-  .container {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .column {
-    padding: 20px;
-  }
-
-  .form {
-    max-width: 100%;
-  }
+.sub{
+font-size:10px;
+color:#b8afa6;
+margin-top:4px;
 }
 
-/* ---------- ✨ SPARKLES (BLUE / SILVER / WHITE) ---------- */
-.sparkle {
-  position: fixed;
 
-  width: 10px;
-  height: 10px;
+/* sparkles */
 
-  background: radial-gradient(circle,
-    #ffffff 0%,
-    #dff3ff 30%,
-    #b8e0ff 60%,
-    #9fd4ff 80%,
-    transparent 100%
-  );
+.sparkle{
+position:absolute;
+width:10px;
+height:10px;
 
-  border-radius: 50%;
+background:radial-gradient(circle,
+#ffffff 0%,
+#dff3ff 30%,
+#b8e0ff 60%,
+#9fd4ff 80%,
+transparent 100%
+);
 
-  box-shadow:
-    0 0 6px rgba(255,255,255,0.9),
-    0 0 12px rgba(160,210,255,0.7),
-    0 0 18px rgba(120,180,255,0.4);
+border-radius:50%;
 
-  pointer-events: none;
+box-shadow:
+0 0 6px rgba(255,255,255,0.9),
+0 0 12px rgba(160,210,255,0.7),
+0 0 18px rgba(120,180,255,0.4);
 
-  animation: sparkleFloat 1.2s ease-out forwards;
+pointer-events:none;
+
+animation:sparkleFloat 1.2s ease-out forwards;
 }
 
-@keyframes sparkleFloat {
-  0% {
-    opacity: 1;
-    transform: scale(0.6) translate(0, 0);
-  }
-  40% {
-    opacity: 1;
-    transform: scale(1.2) translate(var(--x), var(--y));
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.4) translate(calc(var(--x) * 1.8), calc(var(--y) * 1.8));
-  }
+@keyframes sparkleFloat{
+
+0%{
+opacity:1;
+transform:scale(.6) translate(0,0);
 }
 
-/* ---------- 💨 SMOKE (SOFT CLOUD) ---------- */
-.smoke {
-  position: fixed;
-
-  width: 40px;
-  height: 40px;
-
-  background: radial-gradient(circle,
-    rgba(220,220,220,0.6) 0%,
-    rgba(200,200,200,0.4) 40%,
-    rgba(200,200,200,0.2) 70%,
-    transparent 100%
-  );
-
-  border-radius: 50%;
-
-  pointer-events: none;
-
-  animation: smokePoof 700ms ease-out forwards;
+40%{
+opacity:1;
+transform:scale(1.2) translate(var(--x),var(--y));
 }
 
-@keyframes smokePoof {
-  0% {
-    opacity: 0.7;
-    transform: scale(0.4);
-  }
-  50% {
-    opacity: 0.4;
-    transform: scale(1.6);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(3);
-  }
-}
-/* ---------- ITEM MAGIC APPEAR ---------- */
-
-.item.magic {
-  opacity: 0;
-  transform: translateY(8px) scale(0.95);
-  animation: itemAppear 400ms ease forwards;
+100%{
+opacity:0;
+transform:scale(.4) translate(calc(var(--x)*1.8),calc(var(--y)*1.8));
 }
 
-@keyframes itemAppear {
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }

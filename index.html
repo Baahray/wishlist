@@ -7,7 +7,7 @@
 
 <title>Our Wishlist</title>
 
-<link rel="stylesheet" href="styles.css?v=20">
+<link rel="stylesheet" href="styles.css">
 
 </head>
 
@@ -17,64 +17,68 @@
 
 <div class="container">
 
-  <div class="column">
-    <h2>Vetannie</h2>
+<div class="column">
 
-    <select id="her-currency" onchange="renderTotals()">
-      <option value="GBP">£ GBP</option>
-      <option value="USD">$ USD</option>
-    </select>
+<h2>Vetannie</h2>
 
-    <div class="form">
-      <input id="her-name" placeholder="Item or link">
-      <input id="her-price" type="number" placeholder="Price">
+<select id="her-currency" onchange="renderTotals()">
+<option value="GBP">£ GBP</option>
+<option value="USD">$ USD</option>
+</select>
 
-      <select id="her-rating">
-        <option value="1">★</option>
-        <option value="2">★★</option>
-        <option value="3">★★★</option>
-      </select>
+<div class="form">
+<input id="her-name" placeholder="Item or link">
+<input id="her-price" type="number" placeholder="Price">
 
-      <button onclick="addItem('her')">Add item</button>
-    </div>
+<select id="her-rating">
+<option value="1">★</option>
+<option value="2">★★</option>
+<option value="3">★★★</option>
+</select>
 
-    <div class="list" id="her-list"></div>
+<button onclick="addItem('her')">Add item</button>
+</div>
 
-    <div class="total">
-      <span id="her-total">£0.00</span>
-      <div class="sub" id="her-sub"></div>
-    </div>
-  </div>
+<div class="list" id="her-list"></div>
+
+<div class="total">
+<span id="her-total">£0.00</span>
+<div class="sub" id="her-sub"></div>
+</div>
+
+</div>
 
 
-  <div class="column">
-    <h2>Barry</h2>
+<div class="column">
 
-    <select id="him-currency" onchange="renderTotals()">
-      <option value="GBP">£ GBP</option>
-      <option value="USD">$ USD</option>
-    </select>
+<h2>Barry</h2>
 
-    <div class="form">
-      <input id="him-name" placeholder="Item or link">
-      <input id="him-price" type="number" placeholder="Price">
+<select id="him-currency" onchange="renderTotals()">
+<option value="GBP">£ GBP</option>
+<option value="USD">$ USD</option>
+</select>
 
-      <select id="him-rating">
-        <option value="1">★</option>
-        <option value="2">★★</option>
-        <option value="3">★★★</option>
-      </select>
+<div class="form">
+<input id="him-name" placeholder="Item or link">
+<input id="him-price" type="number" placeholder="Price">
 
-      <button onclick="addItem('him')">Add item</button>
-    </div>
+<select id="him-rating">
+<option value="1">★</option>
+<option value="2">★★</option>
+<option value="3">★★★</option>
+</select>
 
-    <div class="list" id="him-list"></div>
+<button onclick="addItem('him')">Add item</button>
+</div>
 
-    <div class="total">
-      <span id="him-total">£0.00</span>
-      <div class="sub" id="him-sub"></div>
-    </div>
-  </div>
+<div class="list" id="him-list"></div>
+
+<div class="total">
+<span id="him-total">£0.00</span>
+<div class="sub" id="him-sub"></div>
+</div>
+
+</div>
 
 </div>
 
@@ -86,224 +90,205 @@ import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/f
 
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "wishlist-6c440.firebaseapp.com",
-  projectId: "wishlist-6c440",
-  storageBucket: "wishlist-6c440.firebasestorage.app",
-  messagingSenderId: "1034747393035",
-  appId: "1:1034747393035:web:24166b3cc58d0a5950030e"
+apiKey:"YOUR_API_KEY",
+authDomain:"wishlist-6c440.firebaseapp.com",
+projectId:"wishlist-6c440",
+storageBucket:"wishlist-6c440.firebasestorage.app",
+messagingSenderId:"1034747393035",
+appId:"1:1034747393035:web:24166b3cc58d0a5950030e"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app = initializeApp(firebaseConfig)
+const db = getFirestore(app)
 
-const wishlistRef = doc(db, "wishlist", "shared");
-
-
-let data = { her: [], him: [] };
-let rendered = { her: 0, him: 0 };
-
-const rate = 1.27;
+const wishlistRef = doc(db,"wishlist","shared")
 
 
-/* ---------- FORMAT ---------- */
+let data={her:[],him:[]}
+let rendered={her:0,him:0}
 
-function format(amount, currency){
+const rate=1.27
 
-  return currency === "GBP"
-    ? "£"+amount.toFixed(2)
-    : "$"+amount.toFixed(2)
+
+function format(amount,currency){
+
+return currency==="GBP"
+?"£"+amount.toFixed(2)
+:"$"+amount.toFixed(2)
 
 }
 
 function convert(amount,currency){
 
-  return currency === "GBP"
-    ? "$"+(amount*rate).toFixed(2)
-    : "£"+(amount/rate).toFixed(2)
+return currency==="GBP"
+?"$"+(amount*rate).toFixed(2)
+:"£"+(amount/rate).toFixed(2)
 
 }
 
-
-/* ---------- RENDER NEW ITEMS ONLY ---------- */
 
 function render(){
 
-  ["her","him"].forEach(side=>{
+["her","him"].forEach(side=>{
 
-    const list = document.getElementById(side+"-list")
+const list=document.getElementById(side+"-list")
 
-    for(let i=rendered[side]; i<data[side].length; i++){
+for(let i=rendered[side];i<data[side].length;i++){
 
-      const item = data[side][i]
+const item=data[side][i]
 
-      const currency = document.getElementById(side+"-currency").value
+const currency=document.getElementById(side+"-currency").value
 
-      const isLink = item.name.startsWith("http")
+const isLink=item.name.startsWith("http")
 
-      let displayName = item.name
+let displayName=item.name
 
-      if(isLink){
-        try{
-          const url = new URL(item.name)
-          displayName = url.hostname.replace("www.","")
-        }catch{}
-      }
+if(isLink){
 
-      const div = document.createElement("div")
-
-      div.className="item"
-      div.style.opacity="0"
-
-      div.innerHTML = `
-      <div class="item-text">
-      ${
-        isLink
-        ? `<a href="${item.name}" target="_blank">${displayName}</a>`
-        : displayName
-      }
-      <span class="price">${format(item.price,currency)}</span>
-      <span class="stars">${"★".repeat(item.rating)}</span>
-      </div>
-      <span class="delete" onclick="removeItem('${side}',${i})">×</span>
-      `
-
-      list.appendChild(div)
-
-      sparkleReveal(div)
-
-      requestAnimationFrame(()=>{
-        div.style.transition="opacity .35s ease"
-        div.style.opacity="1"
-      })
-
-    }
-
-    rendered[side]=data[side].length
-
-  })
-
-  renderTotals()
+try{
+const url=new URL(item.name)
+displayName=url.hostname.replace("www.","")
+}catch{}
 
 }
 
+const div=document.createElement("div")
 
-/* ---------- TOTALS ---------- */
+div.className="item hidden"
 
-function renderTotals(){
+div.innerHTML=`
+<div class="item-text">
+${
+isLink
+?`<a href="${item.name}" target="_blank">${displayName}</a>`
+:displayName
+}
+<span class="price">${format(item.price,currency)}</span>
+<span class="stars">${"★".repeat(item.rating)}</span>
+</div>
+<span class="delete" onclick="removeItem('${side}',${i})">×</span>
+`
 
-  ["her","him"].forEach(side=>{
+list.appendChild(div)
 
-    const currency = document.getElementById(side+"-currency").value
+sparkleReveal(div)
 
-    let total=0
-
-    data[side].forEach(item=>{
-      total+=Number(item.price)
-    })
-
-    document.getElementById(side+"-total").textContent = format(total,currency)
-    document.getElementById(side+"-sub").textContent = convert(total,currency)
-
-  })
+setTimeout(()=>{
+div.classList.remove("hidden")
+},120)
 
 }
 
-
-/* ---------- SAVE ---------- */
-
-async function save(){
-  await setDoc(wishlistRef,data)
-}
-
-
-/* ---------- ADD ---------- */
-
-window.addItem = async function(side){
-
-  const name = document.getElementById(side+"-name").value.trim()
-  const price = parseFloat(document.getElementById(side+"-price").value)||0
-  const rating = parseInt(document.getElementById(side+"-rating").value)
-
-  if(!name) return
-
-  data[side].push({name,price,rating})
-
-  await save()
-
-  document.getElementById(side+"-name").value=""
-  document.getElementById(side+"-price").value=""
-
-}
-
-
-/* ---------- REMOVE ---------- */
-
-window.removeItem = async function(side,i){
-
-  data[side].splice(i,1)
-
-  rendered[side]=0
-
-  document.getElementById(side+"-list").innerHTML=""
-
-  await save()
-
-}
-
-
-/* ---------- REALTIME ---------- */
-
-onSnapshot(wishlistRef,(docSnap)=>{
-
-  if(docSnap.exists()){
-
-    data = docSnap.data()
-
-    render()
-
-  }else{
-
-    save()
-
-  }
+rendered[side]=data[side].length
 
 })
 
-</script>
+renderTotals()
+
+}
 
 
-<script>
+function renderTotals(){
 
-/* ---------- SPARKLES ---------- */
+["her","him"].forEach(side=>{
+
+const currency=document.getElementById(side+"-currency").value
+
+let total=0
+
+data[side].forEach(item=>{
+total+=Number(item.price)
+})
+
+document.getElementById(side+"-total").textContent=format(total,currency)
+document.getElementById(side+"-sub").textContent=convert(total,currency)
+
+})
+
+}
+
+
+async function save(){
+await setDoc(wishlistRef,data)
+}
+
+
+window.addItem=async function(side){
+
+const name=document.getElementById(side+"-name").value.trim()
+const price=parseFloat(document.getElementById(side+"-price").value)||0
+const rating=parseInt(document.getElementById(side+"-rating").value)
+
+if(!name)return
+
+data[side].push({name,price,rating})
+
+await save()
+
+document.getElementById(side+"-name").value=""
+document.getElementById(side+"-price").value=""
+
+}
+
+
+window.removeItem=async function(side,i){
+
+data[side].splice(i,1)
+
+rendered[side]=0
+document.getElementById(side+"-list").innerHTML=""
+
+await save()
+
+}
+
+
+onSnapshot(wishlistRef,(docSnap)=>{
+
+if(docSnap.exists()){
+
+data=docSnap.data()
+
+render()
+
+}else{
+
+save()
+
+}
+
+})
+
 
 function sparkleReveal(element){
 
-  const rect = element.getBoundingClientRect()
+const rect=element.getBoundingClientRect()
 
-  for(let i=0;i<18;i++){
+const startX=rect.left+rect.width/2+window.scrollX
+const startY=rect.top+rect.height/2+window.scrollY
 
-    const s = document.createElement("div")
+for(let i=0;i<18;i++){
 
-    s.className="sparkle"
+const s=document.createElement("div")
 
-    const x = rect.left + rect.width/2
-    const y = rect.top + rect.height/2
+s.className="sparkle"
 
-    const angle = Math.random()*Math.PI*2
-    const distance = 25 + Math.random()*50
+const angle=Math.random()*Math.PI*2
+const distance=25+Math.random()*50
 
-    s.style.left=x+"px"
-    s.style.top=y+"px"
+s.style.left=startX+"px"
+s.style.top=startY+"px"
 
-    s.style.setProperty("--x",Math.cos(angle)*distance+"px")
-    s.style.setProperty("--y",Math.sin(angle)*distance+"px")
+s.style.setProperty("--x",Math.cos(angle)*distance+"px")
+s.style.setProperty("--y",Math.sin(angle)*distance+"px")
 
-    document.body.appendChild(s)
+document.body.appendChild(s)
 
-    setTimeout(()=>s.remove(),1200)
+setTimeout(()=>{
+s.remove()
+},1200)
 
-  }
+}
 
 }
 
